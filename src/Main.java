@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import io.appwrite.Client;
 
-import Utils.Utils;
-
 public class Main {
 
     public RuntimeOutput main(RuntimeContext context) throws Exception {
