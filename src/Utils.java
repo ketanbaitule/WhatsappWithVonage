@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class FileUtils {
+public class Utils {
     /**
      * Returns the contents of a file in the static folder
      *
