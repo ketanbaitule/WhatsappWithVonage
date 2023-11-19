@@ -10,8 +10,8 @@ public class Main {
 
     public RuntimeOutput main(RuntimeContext context) throws Exception {
         if (context.getReq().getMethod().equals("GET")) {
-            return context.getRes().send(Utils.getStaticFile("index.html"));
+            return context.getRes().send("Got GET Request");
         }
-        return context.getRes().send("Not GET Request");
+        return context.getRes().send("Not GET Request: "+context.getReq().getMethod());
     }
 }
