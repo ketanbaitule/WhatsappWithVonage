@@ -6,7 +6,7 @@ import io.openruntimes.java.RuntimeOutput;
 public class Main {
 
     public RuntimeOutput main(RuntimeContext context) throws Exception {
-        String reqVariables = {
+        String reqVariables[] = {
             "VONAGE_API_KEY",
             "VONAGE_API_SECRET",
             "VONAGE_API_SIGNATURE_SECRET",

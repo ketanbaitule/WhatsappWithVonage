@@ -32,7 +32,7 @@ public class Utils {
      * @param keys The array of keys to check for
      * @throws Exception If any required fields are missing
      */
-    public static void throwIfMissing(Map<String, String> map, String[] keys) throws Exception {
+    public static void throw_if_missing(Map<String, String> map, String[] keys) throws Exception {
         List<String> missing = new ArrayList<String>();
         for (String key : keys) {
             if (!map.containsKey(key) || map.get(key) == null) {
