@@ -12,5 +12,6 @@ public class Main {
         if (context.getReq().getMethod().equals("GET")) {
             return context.getRes().send(Utils.getStaticFile("index.html"));
         }
+        return context.getRes().send("Not GET Request");
     }
 }
