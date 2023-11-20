@@ -49,8 +49,8 @@ public class Main {
         Map<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put("ok", true); 
 
-        Object body = context.getReq();
-        Map<String, String> headers = context.req.headers();
+        Object body = context.getReq().getBody();
+        Map<String, String> headers = context.getReq().getHeaders();
 
         // Verify JWT 
         try {
@@ -69,20 +69,20 @@ public class Main {
 			String rawBodyHash = hexStringBuilder.toString();
             if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
                 responseMap.put("ok", false);
-                responseMap.put("error", "Payload hash mismatch.", 401);
-                return context.getRes().json(gson.toJson(responseMap));
+                responseMap.put("error", "Payload hash mismatch.");
+                return context.getRes().json(gson.toJson(responseMap), 401);
             }
 		
 		}catch (JwtException | NoSuchAlgorithmException e) {
 			responseMap.put("ok", false);
-            responseMap.put("error", "Invalid Token", 401);
-            return context.getRes().json(gson.toJson(responseMap));
+            responseMap.put("error", "Invalid Token");
+            return context.getRes().json(gson.toJson(responseMap), 401);
 		}
 
 
         try{
             String reqHeader[] = {"from", "text"};
-            throw_if_missing(context.getReq().getBody(), reqHeader);
+            Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
         }catch(Exception e){
             responseMap.put("ok", false); 
             responseMap.put("error", e.getMessage());
