@@ -54,7 +54,7 @@ public class Main {
 
         // Verify JWT 
         try {
-            String token = headers.get("authorization") ? headers.get("authorization").split(" ")[0] : "";
+            String token = String.IsNullOrEmpty(headers.get("authorization")) ? headers.get("authorization").split(" ")[0] : "";
 			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
 			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
 			
@@ -70,13 +70,13 @@ public class Main {
             if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
                 responseMap.put("ok", false);
                 responseMap.put("error", "Payload hash mismatch.");
-                return context.getRes().json(gson.toJson(responseMap), 401);
+                return context.getRes().json(responseMap, 401);
             }
 		
 		}catch (JwtException | NoSuchAlgorithmException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
-            return context.getRes().json(gson.toJson(responseMap), 401);
+            return context.getRes().json(responseMap, 401);
 		}
 
 
@@ -86,7 +86,7 @@ public class Main {
         }catch(Exception e){
             responseMap.put("ok", false); 
             responseMap.put("error", e.getMessage());
-            return context.getRes().send(gson.toJson(responseMap), 400);
+            return context.getRes().json(responseMap, 400);
         }
         
         try{
