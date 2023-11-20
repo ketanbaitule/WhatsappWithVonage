@@ -18,6 +18,18 @@ import java.io.IOException;
 
 import java.util.Base64;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.io.Decoders;
+
+import javax.crypto.SecretKey;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+
 public class Main {
 
     public RuntimeOutput main(RuntimeContext context) throws Exception {
@@ -32,14 +44,57 @@ public class Main {
         if (context.getReq().getMethod().equals("GET")) {
             return context.getRes().send("Got GET Request");
         }
+
+        Gson gson = new Gson();
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        responseMap.put("ok", true); 
+
+        Object body = context.getReq();
+        Map<String, String> headers = context.req.headers();
+
+        // Verify JWT 
+        try {
+            String token = headers.get("authorization") ? headers.get("authorization").split(" ")[0] : '';
+			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
+			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
+			
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+
+			StringBuilder hexStringBuilder = new StringBuilder();
+			for (byte b : hash) {
+				hexStringBuilder.append(String.format("%02x", b));
+			}
+
+			String rawBodyHash = hexStringBuilder.toString();
+            if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
+                responseMap.put("ok", false);
+                responseMap.put("error", "Payload hash mismatch.", 401);
+                return context.getRes().json(gson.toJson(responseMap));
+            }
+		
+		}catch (JwtException | NoSuchAlgorithmException e) {
+			responseMap.put("ok", false);
+            responseMap.put("error", "Invalid Token", 401);
+            return context.getRes().json(gson.toJson(responseMap));
+		}
+
+
+        try{
+            String reqHeader[] = {"from", "text"}
+            throw_if_missing(context.getReq().getBody(), reqHeader);
+        }catch(Exception e){
+            responseMap.put("ok", false); 
+            responseMap.put("error", e.getMessage());
+            return context.getRes().send(gson.toJson(responseMap), 400);
+        }
         
         try{
-			Gson gson = new Gson();
 			Map<String, String> data = new HashMap<String, String>();
 			data.put("from", System.getenv("VONAGE_WHATSAPP_NUMBER"));
 			data.put("to", System.getenv("TO_NUMBER"));
 			data.put("message_type", "text");
-			data.put("text", "Hi, this is body");
+			data.put("text", "Hi, this is body: "+context.getReq().getBody()["text"]);
 			data.put("channel", "whatsapp");
 	
 			String body = gson.toJson(data);
