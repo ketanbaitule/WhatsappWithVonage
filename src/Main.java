@@ -52,7 +52,7 @@ public class Main {
         Object body = context.getReq().getBody();
         Map<String, String> headers = context.getReq().getHeaders();
 
-        System.out.println(headers.get("authorization"));
+        context.log(headers.get("authorization"));
 
         // // Verify JWT 
         // try {
