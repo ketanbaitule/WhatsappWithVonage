@@ -86,6 +86,7 @@ public class Main {
         context.log("Body Object Down:");
         context.log(context.getReq().getBody() instanceof HashMap);
         context.log(context.getReq().getBody() instanceof Map);
+        context.log(context.getReq(),getBody().containsKey("text"));
         context.log(context.getReq().getBody() instanceof String);
         try{
             String reqHeader[] = {"from", "text"};
