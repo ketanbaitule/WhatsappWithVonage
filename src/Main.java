@@ -96,7 +96,7 @@ public class Main {
 			data.put("from", System.getenv("VONAGE_WHATSAPP_NUMBER"));
 			data.put("to", System.getenv("TO_NUMBER"));
 			data.put("message_type", "text");
-			data.put("text", "Hi, this is body: "+context.getReq().getBody().get("text"));
+			data.put("text", "Hi, this is body: "+context.getReq().getBody()["text"]);
 			data.put("channel", "whatsapp");
 	
 			String basicAuth= System.getenv("VONAGE_API_KEY") + ":" + System.getenv("VONAGE_API_SECRET");
