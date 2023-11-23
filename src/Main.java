@@ -80,8 +80,8 @@ public class Main {
         //     responseMap.put("error", "Invalid Token");
         //     return context.getRes().json(responseMap, 401);
 		// }
-
-
+        context.log("Body Object Down:");
+        context.log(context.getReq().getBody());
         try{
             String reqHeader[] = {"from", "text"};
             //Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
@@ -96,7 +96,7 @@ public class Main {
 			data.put("from", System.getenv("VONAGE_WHATSAPP_NUMBER"));
 			data.put("to", System.getenv("TO_NUMBER"));
 			data.put("message_type", "text");
-			data.put("text", "Hi, this is body: "+context.getReq().getBody()["text"]);
+			data.put("text", "Hi, this is body: "+context.getReq().getBodyRaw());
 			data.put("channel", "whatsapp");
 	
 			String basicAuth= System.getenv("VONAGE_API_KEY") + ":" + System.getenv("VONAGE_API_SECRET");
