@@ -30,7 +30,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.nio.charset.StandardCharsets;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
@@ -83,7 +83,8 @@ public class Main {
         //     return context.getRes().json(responseMap, 401);
 		// }
         context.log("Body Object Down:");
-        context.log(context.getReq().getBody() instanceof HashMap);
+        context.log(context.getReq().getBody() instanceof Map);
+        context.log(context.getReq().getBody() instanceof String);
         try{
             String reqHeader[] = {"from", "text"};
             //Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
