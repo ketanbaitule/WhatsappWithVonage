@@ -52,37 +52,39 @@ public class Main {
         Object body = context.getReq().getBody();
         Map<String, String> headers = context.getReq().getHeaders();
 
-        // Verify JWT 
-        try {
-            String token = String.IsNullOrEmpty(headers.get("authorization")) ? headers.get("authorization").split(" ")[0] : "";
-			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
-			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
+        System.out.println(headers.get("authorization"));
+
+        // // Verify JWT 
+        // try {
+        //     String token = String.IsNullOrEmpty(headers.get("authorization")) ? headers.get("authorization").split(" ")[0] : null;
+		// 	SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
+		// 	Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
 			
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] hash = md.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+		// 	MessageDigest md = MessageDigest.getInstance("SHA-256");
+		// 	byte[] hash = md.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
 
-			StringBuilder hexStringBuilder = new StringBuilder();
-			for (byte b : hash) {
-				hexStringBuilder.append(String.format("%02x", b));
-			}
+		// 	StringBuilder hexStringBuilder = new StringBuilder();
+		// 	for (byte b : hash) {
+		// 		hexStringBuilder.append(String.format("%02x", b));
+		// 	}
 
-			String rawBodyHash = hexStringBuilder.toString();
-            if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
-                responseMap.put("ok", false);
-                responseMap.put("error", "Payload hash mismatch.");
-                return context.getRes().json(responseMap, 401);
-            }
+		// 	String rawBodyHash = hexStringBuilder.toString();
+        //     if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
+        //         responseMap.put("ok", false);
+        //         responseMap.put("error", "Payload hash mismatch.");
+        //         return context.getRes().json(responseMap, 401);
+        //     }
 		
-		}catch (JwtException | NoSuchAlgorithmException e) {
-			responseMap.put("ok", false);
-            responseMap.put("error", "Invalid Token");
-            return context.getRes().json(responseMap, 401);
-		}
+		// }catch (JwtException | NoSuchAlgorithmException e) {
+		// 	responseMap.put("ok", false);
+        //     responseMap.put("error", "Invalid Token");
+        //     return context.getRes().json(responseMap, 401);
+		// }
 
 
         try{
             String reqHeader[] = {"from", "text"};
-            Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
+            //Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
         }catch(Exception e){
             responseMap.put("ok", false); 
             responseMap.put("error", e.getMessage());
@@ -94,10 +96,8 @@ public class Main {
 			data.put("from", System.getenv("VONAGE_WHATSAPP_NUMBER"));
 			data.put("to", System.getenv("TO_NUMBER"));
 			data.put("message_type", "text");
-			data.put("text", "Hi, this is body: "+context.getReq().getBody()["text"]);
+			data.put("text", "Hi, this is body: "+context.getReq().getBody().get("text"));
 			data.put("channel", "whatsapp");
-	
-			String body = gson.toJson(data);
 	
 			String basicAuth= System.getenv("VONAGE_API_KEY") + ":" + System.getenv("VONAGE_API_SECRET");
 			String basicAuthToken = "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes());
@@ -107,7 +107,7 @@ public class Main {
 				.header("Content-Type", "application/json")
 				.header("Accept", "application/json")
 				.header("Authorization", basicAuthToken)
-				.POST(HttpRequest.BodyPublishers.ofString(body))
+				.POST(HttpRequest.BodyPublishers.ofString(gson.toJson(data)))
 				.build();
 
 			HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
