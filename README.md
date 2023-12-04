@@ -1,6 +1,6 @@
 # ⚡ Java Starter Function
 
-A simple starter function. Edit `src/Main.java` to get started and create something awesome! 🚀
+Simple bot to answer WhatsApp messages.
 
 ## 🧰 Usage
 
