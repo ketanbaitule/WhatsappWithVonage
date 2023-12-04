@@ -56,11 +56,11 @@ public class Main {
         if(context.getReq().getBody() instanceof Map){
             body  = (Map<String, Object>)context.getReq().getBody();
         }else{
-            return context.getRes().send("Error: Body is not map", 404);
+            responseMap.put("ok", false); 
+            responseMap.put("error", e.getMessage());
+            return context.getRes().json(responseMap, 400);
         }
         Map<String, String> headers = context.getReq().getHeaders();
-
-        context.log(headers.get("authorization").split(" ")[1]);
 
         // // Verify JWT 
         // try {
@@ -90,8 +90,7 @@ public class Main {
 		// }
         try{
             String reqHeader[] = {"from", "text"};
-            //Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
-            context.log(body.get("text"));
+            Utils.throw_if_missing(body, reqHeader);
         }catch(Exception e){
             responseMap.put("ok", false); 
             responseMap.put("error", e.getMessage());
@@ -103,7 +102,7 @@ public class Main {
 			data.put("from", System.getenv("VONAGE_WHATSAPP_NUMBER"));
 			data.put("to", System.getenv("TO_NUMBER"));
 			data.put("message_type", "text");
-			data.put("text", "Hi, this is body: "+context.getReq().getBodyRaw());
+			data.put("text", "Hi there! You sent me: "+body.get("text"));
 			data.put("channel", "whatsapp");
 	
 			String basicAuth= System.getenv("VONAGE_API_KEY") + ":" + System.getenv("VONAGE_API_SECRET");
@@ -118,11 +117,12 @@ public class Main {
 				.build();
 
 			HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-			System.out.println("Status Code: " + response.statusCode());
+			
 		}catch(URISyntaxException | IOException | InterruptedException e){
-			e.printStackTrace();
+			responseMap.put("ok", false); 
+            responseMap.put("error", e.getMessage());
+            return context.getRes().json(responseMap, 400);
 		}
-
-        return context.getRes().send("{\"ok\": true}");
+        return context.getRes().json(responseMap);
     }
 }
