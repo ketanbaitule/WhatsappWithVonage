@@ -24,6 +24,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.gson.io.GsonDeserializer;
 
 import javax.crypto.SecretKey;
 import java.security.MessageDigest;
@@ -67,7 +68,7 @@ public class Main {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
 		context.log("token: "+token+".");
 			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
-			Jwts.parser().verifyWith(key).build();//Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
+			Jwts.parser().json(new GsonDeserializer(gson)).verifyWith(key).build();//Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
