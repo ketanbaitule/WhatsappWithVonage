@@ -62,32 +62,32 @@ public class Main {
         }
         Map<String, String> headers = context.getReq().getHeaders();
 
-        // // Verify JWT 
-        // try {
-        //     String token = String.IsNullOrEmpty(headers.get("authorization")) ? headers.get("authorization").split(" ")[0] : null;
-		// 	SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
-		// 	Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
+        // Verify JWT 
+        try {
+            String token = String.IsNullOrEmpty(headers.get("authorization")) ? headers.get("authorization").split(" ")[0] : "";
+			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
+			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
 			
-		// 	MessageDigest md = MessageDigest.getInstance("SHA-256");
-		// 	byte[] hash = md.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
 
-		// 	StringBuilder hexStringBuilder = new StringBuilder();
-		// 	for (byte b : hash) {
-		// 		hexStringBuilder.append(String.format("%02x", b));
-		// 	}
+			StringBuilder hexStringBuilder = new StringBuilder();
+			for (byte b : hash) {
+				hexStringBuilder.append(String.format("%02x", b));
+			}
 
-		// 	String rawBodyHash = hexStringBuilder.toString();
-        //     if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
-        //         responseMap.put("ok", false);
-        //         responseMap.put("error", "Payload hash mismatch.");
-        //         return context.getRes().json(responseMap, 401);
-        //     }
+			String rawBodyHash = hexStringBuilder.toString();
+            if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
+                responseMap.put("ok", false);
+                responseMap.put("error", "Payload hash mismatch.");
+                return context.getRes().json(responseMap, 401);
+            }
 		
-		// }catch (JwtException | NoSuchAlgorithmException e) {
-		// 	responseMap.put("ok", false);
-        //     responseMap.put("error", "Invalid Token");
-        //     return context.getRes().json(responseMap, 401);
-		// }
+		}catch (JwtException | NoSuchAlgorithmException e) {
+			responseMap.put("ok", false);
+            responseMap.put("error", "Invalid Token");
+            return context.getRes().json(responseMap, 401);
+		}
         try{
             String reqHeader[] = {"from", "text"};
             Utils.throw_if_missing(body, reqHeader);
