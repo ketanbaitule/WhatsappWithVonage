@@ -54,7 +54,7 @@ public class Main {
 
         Map<String, Object> body;
         if(context.getReq().getBody() instanceof Map){
-            body  = context.getReq().getBody();
+            body  = (Map<String, Object>)context.getReq().getBody();
         }
         Map<String, String> headers = context.getReq().getHeaders();
 
