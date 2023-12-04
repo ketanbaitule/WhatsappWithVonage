@@ -57,7 +57,7 @@ public class Main {
             body  = (Map<String, Object>)context.getReq().getBody();
         }else{
             responseMap.put("ok", false); 
-            responseMap.put("error", e.getMessage());
+            responseMap.put("error", "Body is not a valid map.");
             return context.getRes().json(responseMap, 400);
         }
         Map<String, String> headers = context.getReq().getHeaders();
