@@ -67,7 +67,7 @@ public class Main {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
 		context.log("token: "+token+".");
 			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
-			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);		
+			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build();//.parseClaimsJws(token)		
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
