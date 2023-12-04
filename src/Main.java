@@ -58,7 +58,7 @@ public class Main {
             body  = (Map<String, Object>)context.getReq().getBody();
         }else{
             responseMap.put("ok", false); 
-            responseMap.put("error", "Body is not a valid map.");
+            responseMap.put("error", "Invalid Body.");
             return context.getRes().json(responseMap, 400);
         }
         Map<String, String> headers = context.getReq().getHeaders();
@@ -66,12 +66,12 @@ public class Main {
         // Verify JWT 
         try {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
-		context.log("token: "+token+".");
 			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
 			Jws<Claims> decoded = Jwts.parser().json(new GsonDeserializer(gson)).verifyWith(key).build().parseClaimsJws(token);
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
+            context.error(e.getMessage());
             return context.getRes().json(responseMap, 401);
 		}
         try{
