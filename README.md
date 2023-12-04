@@ -6,7 +6,7 @@ Simple bot to answer WhatsApp messages.
 
 ### GET /
 
-- Returns a "Hello, World!" message.
+- Returns a "Hello, World!" message
 
 **Response**
 
