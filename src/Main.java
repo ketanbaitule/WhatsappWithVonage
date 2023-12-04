@@ -67,25 +67,7 @@ public class Main {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
 		context.log("token: "+token+".");
 			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
-			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
-			
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] hash = md.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
-
-			StringBuilder hexStringBuilder = new StringBuilder();
-			for (byte b : hash) {
-				hexStringBuilder.append(String.format("%02x", b));
-			}
-
-			String rawBodyHash = hexStringBuilder.toString();
-            context.log(rawBodyHash);
-            context.log(decoded.getPayload().get("payload_hash"));
-            if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
-                responseMap.put("ok", false);
-                responseMap.put("error", "Payload hash mismatch.");
-                return context.getRes().json(responseMap, 401);
-            }
-		
+			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);		
 		}catch (JwtException | NoSuchAlgorithmException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
