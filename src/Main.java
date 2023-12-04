@@ -68,7 +68,7 @@ public class Main {
 		context.log("token: "+token+".");
 			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
 			Jws<Claims> decoded = Jwts.parser().verifyWith(key).build().parseClaimsJws(token);		
-		}catch (JwtException | NoSuchAlgorithmException e) {
+		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
             return context.getRes().json(responseMap, 401);
