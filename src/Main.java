@@ -55,6 +55,8 @@ public class Main {
         Map<String, Object> body;
         if(context.getReq().getBody() instanceof Map){
             body  = (Map<String, Object>)context.getReq().getBody();
+        }else{
+            return context.getRes().send("Error: Body is not map", 404);
         }
         Map<String, String> headers = context.getReq().getHeaders();
 
