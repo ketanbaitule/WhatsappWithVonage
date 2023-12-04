@@ -66,7 +66,7 @@ public class Main {
         // Verify JWT 
         try {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
-			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
+			SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(System.getenv("VONAGE_API_SIGNATURE_SECRET")));
 			Jws<Claims> decoded = Jwts.parser().json(new GsonDeserializer(gson)).verifyWith(key).build().parseClaimsJws(token);
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
