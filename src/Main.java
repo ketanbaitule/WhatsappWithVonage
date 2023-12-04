@@ -52,7 +52,10 @@ public class Main {
         Map<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put("ok", true); 
 
-        Object body = context.getReq().getBody();
+        Map<String, Object> body;
+        if(context.getReq().getBody() instanceof Map){
+            body  = context.getReq().getBody();
+        }
         Map<String, String> headers = context.getReq().getHeaders();
 
         context.log(headers.get("authorization").split(" ")[1]);
@@ -83,14 +86,10 @@ public class Main {
         //     responseMap.put("error", "Invalid Token");
         //     return context.getRes().json(responseMap, 401);
 		// }
-        context.log("Body Object Down:");
-        context.log(context.getReq().getBody() instanceof HashMap);
-        context.log(context.getReq().getBody() instanceof Map);
-        context.log(context.getReq().getBody().containsKey("text"));
-        context.log(context.getReq().getBody() instanceof String);
         try{
             String reqHeader[] = {"from", "text"};
             //Utils.throw_if_missing(context.getReq().getBody(), reqHeader);
+            context.log(body.get("text"));
         }catch(Exception e){
             responseMap.put("ok", false); 
             responseMap.put("error", e.getMessage());
