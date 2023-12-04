@@ -78,6 +78,8 @@ public class Main {
 			}
 
 			String rawBodyHash = hexStringBuilder.toString();
+            context.log(rawBodyHash);
+            context.log(decoded.getPayload().get("payload_hash"));
             if(!rawBodyHash.equals(decoded.getPayload().get("payload_hash"))){
                 responseMap.put("ok", false);
                 responseMap.put("error", "Payload hash mismatch.");
