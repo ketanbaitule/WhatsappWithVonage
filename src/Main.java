@@ -70,13 +70,11 @@ public class Main {
 			Jws<Claims> decoded = Jwts.parser().json(new GsonDeserializer(gson)).setSigningKey(key).build().parseClaimsJws(token);
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+            byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes());
             String hashedPayload = Base64.getEncoder().encodeToString(hashBytes);
-
+            context.log(hashBytes);
             context.log(hashedPayload);
             context.log(decoded.getBody().get("payload_hash"));
-            context.log(decoded);
-            context.log(decoded.getBody());
 
             // if(hashedPayload.equals(decoded.get("payload_hash"))){
             //     responseMap.put("ok", false);
