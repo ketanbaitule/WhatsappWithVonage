@@ -62,7 +62,6 @@ public class Main {
         }
         Map<String, String> headers = context.getReq().getHeaders();
 
-        // Verify JWT 
         try {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
 			SecretKey key = Keys.hmacShaKeyFor(System.getenv("VONAGE_API_SIGNATURE_SECRET").getBytes());
