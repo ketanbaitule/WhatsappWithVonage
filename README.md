@@ -1,4 +1,4 @@
-# ⚡ Java Starter Function
+# ⚡ Java WhatsApp Bot with Vonage Function
 
 Simple bot to answer WhatsApp messages.
 
