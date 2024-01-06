@@ -73,8 +73,11 @@ public class Main {
             byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
             String hashedPayload = Base64.getEncoder().encodeToString(hashBytes);
 
-            System.out.println(hashedPayload);
-            System.out.println(decoded.getBody().get("payload_hash"));
+            context.log(hashedPayload);
+            context.log(decoded.getBody().get("payload_hash"));
+            context.log(decoded);
+            context.log(decoded.getBody());
+
             // if(hashedPayload.equals(decoded.get("payload_hash"))){
             //     responseMap.put("ok", false);
             //     responseMap.put("error", "Payload hash mismatch.");
