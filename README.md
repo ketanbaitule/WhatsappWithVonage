@@ -1,6 +1,6 @@
 # ⚡ Java Starter Function
 
-Simple bot to answer WhatsApp messages.
+Simple bot to answer WhatsApp messages
 
 ## 🧰 Usage
 
