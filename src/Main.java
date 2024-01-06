@@ -69,8 +69,8 @@ public class Main {
 			SecretKey key = Keys.hmacShaKeyFor(System.getenv("VONAGE_API_SIGNATURE_SECRET").getBytes());
 			Jws<Claims> decoded = Jwts.parser().json(new GsonDeserializer(gson)).setSigningKey(key).build().parseClaimsJws(token);
 
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
             String hashedPayload = Base64.getEncoder().encodeToString(hashBytes);
             if(hashedPayload.equals(decoded.get("payload_hash"))){
                 responseMap.put("ok", false);
