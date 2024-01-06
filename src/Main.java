@@ -66,9 +66,18 @@ public class Main {
         // Verify JWT 
         try {
             String token = (headers.get("authorization") != null && !headers.get("authorization").isEmpty()) ? headers.get("authorization").split(" ")[1] : "";
-            context.log(token);
 			SecretKey key = Keys.hmacShaKeyFor(System.getenv("VONAGE_API_SIGNATURE_SECRET").getBytes());
 			Jws<Claims> decoded = Jwts.parser().json(new GsonDeserializer(gson)).setSigningKey(key).build().parseClaimsJws(token);
+
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+            String hashedPayload = Base64.getEncoder().encodeToString(hashBytes);
+            if(hashedPayload.equals(decoded.get("payload_hash"))){
+                responseMap.put("ok", false);
+                responseMap.put("error", "Payload hash mismatch.");
+                context.error(e.getMessage());
+                return context.getRes().json(responseMap, 401);
+            }
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
