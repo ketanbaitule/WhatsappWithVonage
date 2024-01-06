@@ -71,17 +71,16 @@ public class Main {
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
-            String hashedPayload = Base64.getEncoder().encodeToString(hashBytes);
-            context.log(hashBytes);
-            context.log(hashedPayload);
-            context.log(decoded.getBody().get("payload_hash"));
-            context.log(context.getReq().getBodyRaw());
+            StringBuilder hexStringBuilder = new StringBuilder();
+            for (byte b : hashBytes) {
+                hexStringBuilder.append(String.format("%02x", b));
+            }
 
-            // if(hashedPayload.equals(decoded.get("payload_hash"))){
-            //     responseMap.put("ok", false);
-            //     responseMap.put("error", "Payload hash mismatch.");
-            //     return context.getRes().json(responseMap, 401);
-            // }
+            if(decoded.get("payload_hash").equals(hexStringBuilder.toString())){
+                responseMap.put("ok", false);
+                responseMap.put("error", "Payload hash mismatch.");
+                return context.getRes().json(responseMap, 401);
+            }
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
