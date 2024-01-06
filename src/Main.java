@@ -76,7 +76,7 @@ public class Main {
                 hexStringBuilder.append(String.format("%02x", b));
             }
 
-            if(decoded.get("payload_hash").equals(hexStringBuilder.toString())){
+            if(decoded.getBody().get("payload_hash").equals(hexStringBuilder.toString())){
                 responseMap.put("ok", false);
                 responseMap.put("error", "Payload hash mismatch.");
                 return context.getRes().json(responseMap, 401);
