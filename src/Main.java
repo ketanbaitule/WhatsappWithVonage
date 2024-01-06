@@ -75,6 +75,7 @@ public class Main {
             context.log(hashBytes);
             context.log(hashedPayload);
             context.log(decoded.getBody().get("payload_hash"));
+            context.log(context.getReq().getBodyRaw());
 
             // if(hashedPayload.equals(decoded.get("payload_hash"))){
             //     responseMap.put("ok", false);
