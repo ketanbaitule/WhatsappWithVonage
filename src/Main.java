@@ -75,7 +75,6 @@ public class Main {
             if(hashedPayload.equals(decoded.get("payload_hash"))){
                 responseMap.put("ok", false);
                 responseMap.put("error", "Payload hash mismatch.");
-                context.error(e.getMessage());
                 return context.getRes().json(responseMap, 401);
             }
 		}catch (JwtException e) {
