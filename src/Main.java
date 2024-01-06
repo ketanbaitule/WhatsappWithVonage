@@ -23,7 +23,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.gson.io.GsonDeserializer;
 
 import javax.crypto.SecretKey;
@@ -69,14 +68,20 @@ public class Main {
 			SecretKey key = Keys.hmacShaKeyFor(System.getenv("VONAGE_API_SIGNATURE_SECRET").getBytes());
 			Jws<Claims> decoded = Jwts.parser().json(new GsonDeserializer(gson)).setSigningKey(key).build().parseClaimsJws(token);
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexStringBuilder = new StringBuilder();
-            for (byte b : hashBytes) {
-                hexStringBuilder.append(String.format("%02x", b));
-            }
+            try{
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] hashBytes = digest.digest(context.getReq().getBodyRaw().getBytes(StandardCharsets.UTF_8));
+                StringBuilder hexStringBuilder = new StringBuilder();
+                for (byte b : hashBytes) {
+                    hexStringBuilder.append(String.format("%02x", b));
+                }
 
-            if(!decoded.getBody().get("payload_hash").equals(hexStringBuilder.toString())){
+                if(!decoded.getBody().get("payload_hash").equals(hexStringBuilder.toString())){
+                    responseMap.put("ok", false);
+                    responseMap.put("error", "Payload hash mismatch.");
+                    return context.getRes().json(responseMap, 401);
+                }
+            }catch(NoSuchAlgorithmException e){
                 responseMap.put("ok", false);
                 responseMap.put("error", "Payload hash mismatch.");
                 return context.getRes().json(responseMap, 401);
@@ -84,7 +89,6 @@ public class Main {
 		}catch (JwtException e) {
 			responseMap.put("ok", false);
             responseMap.put("error", "Invalid Token");
-            context.error(e.getMessage());
             return context.getRes().json(responseMap, 401);
 		}
         try{
